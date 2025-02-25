@@ -63,7 +63,25 @@ class MainController extends Controller
         // create array of questions
         $question_number = 1;
         foreach ($indexes as $index) {
-            $questions['question_number'] = [];
+            $question['question_number'] = $question_number++;
+            $question['country'] = $this->app_data[$index]['country'];
+            $question['correct_answer'] = $this->app_data[$index]['capital'];
+
+            // wrong answers
+            $other_capitals = array_column($this->app_data, 'capital');
+
+            // remove the correct answer
+            $other_capitals = array_diff($other_capitals, [$question['correct_answer']]);
+
+            // shuffle the wrong answers
+            shuffle($other_capitals);
+            $question['wrong_answers'] = array_slice($other_capitals, 0, 3);
+
+            // store answer result
+
+            $question['correct'] = null;
+            $questions[] = $question;
         }
+        return $questions;
     }
 }
