@@ -42,8 +42,7 @@ class MainController extends Controller
         );
 
         // get total questions
-
-        $total_questions = $request->input('total_questions');
+        $total_questions = intval($request->input('total_questions'));
 
         // prepare all the quiz structure
         $quiz = $this->prepareQuiz($total_questions);
@@ -60,11 +59,12 @@ class MainController extends Controller
         return redirect()->route('game');
     }
 
-    private function prepareQuiz($total_questions): array
+    private function prepareQuiz($total_questions)
     {
-        // get all the questions
         $questions = [];
         $total_countries = count($this->app_data);
+
+        // create countries index for unique questions
         $indexes = range(0, $total_countries - 1);
         shuffle($indexes);
         $indexes = array_slice($indexes, 0, $total_questions);
@@ -89,6 +89,7 @@ class MainController extends Controller
             // store answer result
 
             $question['correct'] = null;
+
             $questions[] = $question;
         }
         return $questions;
@@ -103,6 +104,7 @@ class MainController extends Controller
         // prepare answers to show in view
         $answers = $quiz[$current_question]['wrong_answers'];
         $answers[] = $quiz[$current_question]['correct_answer'];
+
         shuffle($answers);
 
         return view('game')->with([
